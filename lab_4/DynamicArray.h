@@ -13,7 +13,7 @@ template<class T> class DynamicArray: public sequence<T>{
     int size;
     int capacity;
 public:
-    T& operator[](const int index) override;
+    T& operator[](int index) override;
 
     DynamicArray();
 
@@ -36,7 +36,7 @@ public:
 
     void appendClass(const T& value);
     void deleteOne(int index) override;
-    void subSequence(const int startIndex, const int endIndex,   sequence<T>* Sub) override;
+    void subSequence(int startIndex, int endIndex,   sequence<T>* Sub) override;
     void concat(sequence<T>* Sub) override;
     int getSize() override;
 
@@ -50,7 +50,7 @@ public:
     void where(bool (*function)(T data, int option), int option) override;
 };
 
-template<class T> T& DynamicArray<T>::operator[](const int index) {
+template<class T> T& DynamicArray<T>::operator[](int index) {
     assert(index < size && "Ошибка: Вы пытаетесь указать индекс, выходит за заполненное пространство массива");
     return data[index];
 }
@@ -84,19 +84,21 @@ template<class T> void DynamicArray<T>::bubble_sort(bool (*function)(T data1, T 
     }
 }
 
-template<class T> void DynamicArray<T>::choices_sort(bool (*function)(T data1, T data2)) // сортировка выбором
+template<class T> void DynamicArray<T>::choices_sort(bool (*function)(T data1, T data2)) // сортировка выбором (поиск наименьшего элемента)
 {
-    for (int repeat_counter = 0; repeat_counter < size; repeat_counter++)
+    for (int i = 0; i < size; i++)
     {
-        T temp = data[0]; // временная переменная для хранения значения перестановки
-        for (int element_counter = repeat_counter + 1; element_counter < size; element_counter++)
+        T *temp = data[i]; // указатель на найменьший элемент
+        for (int j = i + 1; j < size; j++)
         {
-            if (function(data[repeat_counter],data[element_counter]))
+            if (function(data[i],data[j]))
             {
-                temp = data[repeat_counter];
-                data[repeat_counter] = data[element_counter];
-                data[element_counter] = temp;
+                if (function(temp,data[j]))
+                {
+                    temp = data[j];
+                }
             }
+            std::swap(data[i], temp);
         }
     }
 }
@@ -218,7 +220,7 @@ template<class T> void DynamicArray<T>::deleteOne(int index){
     size--;
 }
 
-template<class T> void DynamicArray<T>::subSequence(const int startIndex, const int endIndex,   sequence<T>* Sub)  {
+template<class T> void DynamicArray<T>::subSequence(int startIndex,int endIndex,   sequence<T>* Sub)  {
     if (startIndex < size && size > endIndex && startIndex < endIndex  && startIndex >= 0 && endIndex > 0) {
         if (Sub->getSize() > 0) {
             return;

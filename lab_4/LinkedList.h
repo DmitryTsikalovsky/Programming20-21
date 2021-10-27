@@ -30,7 +30,7 @@ template<typename T> class LinkedList: public sequence<T> {
     List<T> *list;
     int size;
 public:
-    T &operator[](const int index) override;
+    T &operator[](int index) override;
 
     LinkedList();
 
@@ -39,7 +39,7 @@ public:
 
     ~LinkedList() override;
 
-    void subSequence(const int startIndex, const int endIndex,  sequence<T>* Sub)  override;
+    void subSequence(int startIndex,int endIndex,  sequence<T>* Sub)  override;
     void deleteOne(int index) override;
     void concat(sequence<T>* Sub) override ;
 
@@ -350,7 +350,7 @@ template<class T> Item<T>* LinkedList<T>::partition(Item<T> *head, Item<T> *end,
 
 
 
-template<class T>  T& LinkedList<T>::operator[](const int index){
+template<class T>  T& LinkedList<T>::operator[](int index){
         assert(index < size && index >-1 && "Ошибка: Вы пытаетесь указать индекс, выходит за заполненное пространство массива");
             Item<T> *ptr = list->head;
             for (int i = 0; i < index; ++i) {
@@ -392,7 +392,7 @@ template<class T>  LinkedList<T>::~LinkedList() {
     size = 0;
 }
 
-template<class T>  void LinkedList<T>::subSequence(const int startIndex, const int endIndex,  sequence<T>* Sub) {
+template<class T>  void LinkedList<T>::subSequence(int startIndex, int endIndex,  sequence<T>* Sub) {
     if (startIndex < size && size > endIndex && startIndex < endIndex && startIndex >= 0 && endIndex > 0) {
         Item<T> *ptr = list->head;
         for (int i = 0; i <= endIndex; ++i) {
