@@ -3,97 +3,120 @@
 //
 #include "Sequence.h"
 #include <iostream>
+#include <cstdio>
 #ifndef INC_2SEMPROGA_SORT_H
 #define INC_2SEMPROGA_SORT_H
 
 
-template<class T> class Sort{
+template<class T, class S> class Sort{
 
-    void bubble_sort(sequence<T>& Object, bool (*function)(T& data1, T& data2)){
-        for (int i = 0; i < Object.getSize(); i++) {
-            for (int j = 0; j < Object.getSize()-1; j++) {
-                if (function(Object[j], Object[j+1])) { // оператор [] возвращает T&
-                    std::swap(Object[j],Object[j+1]);
+private:
+    static void bubble_sort(T *sequence, bool (*function)(const S& data1, const S& data2)){
+        for (int i = 0; i < sequence->getSize(); i++) {
+            for (int j = 0; j < sequence->getSize()-1; j++) {
+                if (function( sequence[0][j], sequence[0][j+1])) { // оператор [] возвращает T&
+                    std::swap(sequence[0][j],sequence[0][j+1]);
                 }
             }
         }
     }
 
-    void merge_sort(sequence<T>& Object, bool (*function)(T& data1, T& data2)){
-        merge_sort_func(Object, function, 0, Object.getSize()-1 );
+    static void merge_sort(T * sequence, bool (*function)(const S& data1,const S& data2)){
+        merge_sort_func(sequence, function, 0, sequence->getSize()-1 );
     }
     //функция, сливающая массивы
-    void merge_sort_func2(sequence<T>& Object, bool (*function)(T& data1, T& data2),int first, int last) {
+    static void merge_sort_func2(T * sequence, bool (*function)(const S& data1,const S& data2),int first, int last) {
         int middle, start, final, j;
-        T *mas = new T[Object.getSize()];
+        S *mas = new S[sequence->getSize()];
         middle = (first + last) / 2;  //вычисление среднего элемента
         start = first;                //начало левой части
         final = middle + 1;           //начало правой части
         for (j = first; j <= last; j++)  //выполнять от начала до конца
-            if ((start <= middle) && ((final > last) || (!function(Object[start] , Object[final]) ))) {
-                mas[j] = std::move(Object[start]);
+            if ((start <= middle) && ((final > last) || (!function(sequence[0][start] , sequence[0][final]) ))) {
+                mas[j] = sequence[0][start];
                 start++;
             } else {
-                mas[j] = std::move(Object[final]);
+                mas[j] = sequence[0][final];
                 final++;
             }
         //возвращение результата в список
         for (j = first; j <= last; j++)
-            Object[j] = std::move(mas[j]);
+            sequence[0][j] = mas[j];
         delete[] mas;
     };
     //рекурсивная процедура сортировки
-    void merge_sort_func(sequence<T>& Object, bool (*function)(T& data1, T& data2), int first, int last) {
+    static void merge_sort_func(T * sequence, bool (*function)(const S& data1,const S& data2), int first, int last) {
         if (first < last) {
-            merge_sort_func(Object, function, first, (first + last) / 2);  //сортировка левой части
-            merge_sort_func(Object, function, (first + last) / 2 + 1, last);  //сортировка правой части
-            merge_sort_func2(Object, function, first, last);  //слияние двух частей
+            merge_sort_func(sequence, function, first, (first + last) / 2);  //сортировка левой части
+            merge_sort_func(sequence, function, (first + last) / 2 + 1, last);  //сортировка правой части
+            merge_sort_func2(sequence, function, first, last);  //слияние двух частей
         }
     }
 
-    void quick_sort(sequence<T>& Object, bool (*function)(T& data1, T& data2)){
-        quick_sort_func(function, 0, size-1);
+    static void quick_sort(T * sequence, bool (*function)(const S& data1,const S& data2)){
+        quick_sort_func(sequence, function, 0, sequence->getSize()-1);
     }
 
-    void quick_sort_func(sequence<T>& Object, bool (*function)(T& data1, T& data2), int low, int high) {
+    static void quick_sort_func(T * sequence, bool (*function)(const S& data1,const S& data2), int low, int high) {
         if (low >= high) return;
-        int index = partition(sequence<T>& Object, function , low, high);
-        quick_sort_func(sequence<T>& Object, function, low, index - 1);
-        quick_sort_func(sequence<T>& Object, function, index + 1, high);
+        int index = partition(sequence, function , low, high);
+        quick_sort_func(sequence, function, low, index - 1);
+        quick_sort_func(sequence, function, index + 1, high);
     }
 
-    int partition(sequence<T>& Object, bool (*function)(T& data1, T& data2), int low, int high)
+    static int partition(T * sequence, bool (*function)(const S& data1,const S& data2), int low, int high)
     {
         int pivotindex = low;
-        T pivotvalue = std::move(Object[high]);
+        S pivotvalue = sequence[0][high];
         for (int i = low; i < high; i++)
         {
-            if (Object[i] < pivotvalue)
+            if (sequence[0][i] < pivotvalue)
             {
-                std::swap(Object[j],Object[pivotindex]);
+                std::swap(sequence[0][i],sequence[0][pivotindex]);
                 pivotindex++;
             }
         }
-        std::swap(Object[pivotindex],Object[high]);
+        std::swap(sequence[0][pivotindex],sequence[0][high]);
         return pivotindex;
     }
 
-    void choices_sort(sequence<T>& Object, bool (*function)(T& data1, T& data2)) // сортировка выбором (поиск наименьшего элемента)
+    static void choices_sort(T * sequence, bool (*function)(const S& data1,const S& data2)) // сортировка выбором (поиск наименьшего элемента)
     {
-        for (int i = 0; i < size; i++)
+        for (int i = 0; i < sequence->getSize(); i++)
         {
-            T *temp = Object[i]; // указатель на найменьший элемент
-            for (int j = i + 1; j < size; j++)
+            int tempIndex = i; // указатель на найменьший элемент
+            for (int j = i + 1; j < sequence->getSize(); j++)
             {
-                if (function(temp,Object[j]))
+                if (function(sequence[0][tempIndex],sequence[0][j]))
                 {
-                    temp = Object[j];
+                    tempIndex = j;
                 }
-                std::swap(Object[i], temp);
             }
+            std::swap(sequence[0][i], sequence[0][tempIndex]);
         }
     }
+public:
+    //    Sort() = default;
+    static void sort(T* sequnece, bool (*function)(const S& data1,const S& data2), int type) {
+        switch(type) {
+            case 1 :
+                bubble_sort(sequnece, function); // prints "1"
+            break;       // and exits the switch
+            case 2 :
+                choices_sort(sequnece, function);
+            break;
+            case 3 :
+                merge_sort(sequnece, function);
+            break;
+            default:
+                quick_sort(sequnece, function);
+            break;
+        }
+
+    }
+
 };
 
+template<class S>void Sort<LinkedList<S>, S>::bubble_sort(S *sequence, bool (*function)(const S& data1, const S& data2))
 
 #endif //INC_2SEMPROGA_SORT_H
