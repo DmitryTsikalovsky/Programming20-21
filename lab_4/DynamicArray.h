@@ -8,7 +8,7 @@ using namespace std;
 #ifndef CPP_DYNAMICARRAY_H
 #define CPP_DYNAMICARRAY_H
 
-template<class T> class DynamicArray: public sequence<T>{
+template<class T> class DynamicArray: public Sequence<T>{
     T *data;
     int size;
     int capacity;
@@ -24,20 +24,20 @@ public:
     ~DynamicArray() override;
     void append(T value) override;
     // класс сорт в котором сортировки по типу данных
-    void sort(bool (*function)(T data1, T data2), int type) override;
-    void bubble_sort(bool (*function)(T data1, T data2));
-    void choices_sort(bool (*function)(T data1, T data2));
-    void quick_sort(bool (*function)(T data1, T data2));
-    void quick_sort_func(bool (*function)(T data1, T data2), int low, int high);
-    int partition(bool (*function)(T data1, T data2), int low, int high);
-    void merge_sort(bool (*function)(T data1, T data2));
-    void merge_sort_func(bool (*function)(T data1, T data2), int low, int high);
-    void merge_sort_func2(bool (*function)(T data1, T data2), int first, int last);
+//    void sort(bool (*function)(T data1, T data2), int type) override;
+//    void bubble_sort(bool (*function)(T data1, T data2));
+//    void choices_sort(bool (*function)(T data1, T data2));
+//    void quick_sort(bool (*function)(T data1, T data2));
+//    void quick_sort_func(bool (*function)(T data1, T data2), int low, int high);
+//    int partition(bool (*function)(T data1, T data2), int low, int high);
+//    void merge_sort(bool (*function)(T data1, T data2));
+//    void merge_sort_func(bool (*function)(T data1, T data2), int low, int high);
+//    void merge_sort_func2(bool (*function)(T data1, T data2), int first, int last);
 
     void appendClass(const T& value);
     void deleteOne(int index) override;
-    void subSequence(int startIndex, int endIndex,   sequence<T>* Sub) override;
-    void concat(sequence<T>* Sub) override;
+    void subSequence(int startIndex, int endIndex,   Sequence<T>* Sub) override;
+    void concat(Sequence<T>* Sub) override;
     int getSize() override;
 
     T getFirst() override;
@@ -53,118 +53,6 @@ public:
 template<class T> T& DynamicArray<T>::operator[](int index) {
     assert(index < size && "Ошибка: Вы пытаетесь указать индекс, выходит за заполненное пространство массива");
     return data[index];
-}
-template<class T> void DynamicArray<T>::sort(bool (*function)(T data1, T data2), int type) {
-    switch(type) {
-        case 1 :
-            bubble_sort(function);
-            break;
-        case 2 :
-            choices_sort(function);
-            break;
-        case 3 :
-            merge_sort(function);
-            break;
-        case 4 :
-            quick_sort(function);
-            break;
-        default : break;
-    }
-}
-
-template<class T> void DynamicArray<T>::bubble_sort(bool (*function)(T data1, T data2)) {
-    for (int i = 0; i < size; i++) {
-        for (int j = 0; j < size-1; j++) {
-            if (function(data[j], data[j+1])) {
-                T b = data[j]; // создали дополнительную переменную
-                data[j] = data[j + 1]; // меняем местами
-                data[j + 1] = b; // значения элементов
-            }
-        }
-    }
-}
-
-template<class T> void DynamicArray<T>::choices_sort(bool (*function)(T data1, T data2)) // сортировка выбором (поиск наименьшего элемента)
-{
-    for (int i = 0; i < size; i++)
-    {
-        T *temp = data[i]; // указатель на найменьший элемент
-        for (int j = i + 1; j < size; j++)
-        {
-            if (function(data[i],data[j]))
-            {
-                if (function(temp,data[j]))
-                {
-                    temp = data[j];
-                }
-            }
-            std::swap(data[i], temp);
-        }
-    }
-}
-
-template<class T> void DynamicArray<T>::quick_sort(bool (*function)(T data1, T data2)){
-    quick_sort_func(function, 0, size-1);
-}
-
-
-template<class T> void DynamicArray<T>::quick_sort_func(bool (*function)(T data1, T data2), int low, int high) {
-    if (low >= high) return;
-    int index = partition(function , low, high);
-    quick_sort_func(function, low, index - 1);
-    quick_sort_func(function, index + 1, high);
-}
-
-template<class T> int DynamicArray<T>::partition(bool (*function)(T data1, T data2), int low, int high)
-{
-    int pivotindex = low;
-    T pivotvalue = data[high];
-    for (int i = low; i < high; i++)
-    {
-        if (data[i] < pivotvalue)
-        {
-            T temp = data[i];
-            data[i] = data[pivotindex];
-            data[pivotindex] = temp;
-            pivotindex++;
-        }
-    }
-    T temp = data[pivotindex];
-    data[pivotindex] = data[high];
-    data[high] = temp;
-    return pivotindex;
-}
-
-template<class T> void DynamicArray<T>::merge_sort(bool (*function)(T data1, T data2)){
-    merge_sort_func(function, 0, size-1);
-}
-//функция, сливающая массивы
-template<class T> void DynamicArray<T>::merge_sort_func2(bool (*function)(T data1, T data2),int first, int last) {
-    int middle, start, final, j;
-    T *mas = new int[100];
-    middle = (first + last) / 2;  //вычисление среднего элемента
-    start = first;                //начало левой части
-    final = middle + 1;           //начало правой части
-    for (j = first; j <= last; j++)  //выполнять от начала до конца
-        if ((start <= middle) && ((final > last) || (!function(data[start] , data[final]) ))) {
-            mas[j] = data[start];
-            start++;
-        } else {
-            mas[j] = data[final];
-            final++;
-        }
-    //возвращение результата в список
-    for (j = first; j <= last; j++)
-        data[j] = mas[j];
-    delete[] mas;
-};
-//рекурсивная процедура сортировки
-template<class T> void DynamicArray<T>::merge_sort_func(bool (*function)(T data1, T data2), int first, int last) {
-    if (first < last) {
-        merge_sort_func(function, first, (first + last) / 2);  //сортировка левой части
-        merge_sort_func(function, (first + last) / 2 + 1, last);  //сортировка правой части
-        merge_sort_func2(function, first, last);  //слияние двух частей
-    }
 }
 
 template<class T> DynamicArray<T>::DynamicArray(){
@@ -220,7 +108,7 @@ template<class T> void DynamicArray<T>::deleteOne(int index){
     size--;
 }
 
-template<class T> void DynamicArray<T>::subSequence(int startIndex,int endIndex,   sequence<T>* Sub)  {
+template<class T> void DynamicArray<T>::subSequence(int startIndex,int endIndex,   Sequence<T>* Sub)  {
     if (startIndex < size && size > endIndex && startIndex < endIndex  && startIndex >= 0 && endIndex > 0) {
         if (Sub->getSize() > 0) {
             return;
@@ -234,7 +122,7 @@ template<class T> void DynamicArray<T>::subSequence(int startIndex,int endIndex,
 
 }
 
-template<class T>  void DynamicArray<T>:: concat(sequence<T>* Sub){
+template<class T>  void DynamicArray<T>:: concat(Sequence<T>* Sub){
     for (int i = 0; i < Sub->getSize(); ++i) {
         append((*Sub)[i]);
     }

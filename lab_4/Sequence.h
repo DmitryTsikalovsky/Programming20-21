@@ -24,12 +24,13 @@
 //запрет на копирование и перемещение
 //итераторы
 // рассказать про все сортировки
-template<class T> class sequence {
+//засеч время в стандартной библиотеке
+template<class T> class Sequence {
 public:
     virtual T& operator[](int index) = 0; // Переопределение квадратных скобок необходимо для получения элемента по индексу способом Class[index]
     virtual void set(int index, T value) = 0; // Занесение значения по заданному индексу
-    virtual void subSequence(int startIndex, int endIndex,  sequence<T>* Sub) = 0; // Выделение подпоследовательности по заданным индексам, путём создания нового объёкта класса и дальнейшим копированием в него необходимых элементов
-    virtual void concat(sequence<T>* Sub) = 0; // Объёдинение данных двух одинаковых классов
+    virtual void subSequence(int startIndex, int endIndex,  Sequence<T>* Sub) = 0; // Выделение подпоследовательности по заданным индексам, путём создания нового объёкта класса и дальнейшим копированием в него необходимых элементов
+    virtual void concat(Sequence<T>* Sub) = 0; // Объёдинение данных двух одинаковых классов
     virtual void deleteOne(int index) = 0; // Удаление элемента по Заданному индексу
     virtual void map(T (*function)(T data, int option), int option) = 0; // Функция map, Применяющая данную ей функцию для каждого элмента
     virtual void where(bool (*function)(T data, int option), int option) = 0;// Функция where, с помощью переданной в неё функции фильтрующая элементы, удаляя те, для которых из функции возвращён false
@@ -39,13 +40,13 @@ public:
     virtual int getSize() = 0; // Получение количества заполненных элементов
     virtual T getFirst() = 0;// Получение данных, находящихся в первом элементе
 
-    virtual void sort(bool (*function)(T data1, T data2), int type) = 0; // Сортировка
+//    virtual void sort(bool (*function)(T data1, T data2), int type) = 0; // Сортировка
     // передавать конст сыллку чтобы не создавать копии
     //посмотреть enum
     // 1- bubble 2 - insert 3 - merge 4 - quick
 
-    virtual ~sequence() = 0;
+    virtual ~Sequence() = 0;
 };
 // выражение, необходимое для корректного создания виртуального деструктора
-template<class T> sequence<T>::~sequence(){};
+template<class T> Sequence<T>::~Sequence(){};
 #endif //CPP_SEQUENCE_H
