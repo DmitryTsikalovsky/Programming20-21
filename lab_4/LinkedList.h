@@ -27,9 +27,10 @@ struct List {
 
 // Наследник виртуального класса sequence, в котором реализована работа всех виртуальных методов с помощью односвязного списка
 template<typename T> class LinkedList: public Sequence<T> {
+
+public:
     List<T> *list;
     int size;
-public:
     T&operator[](int index) override;
 
     LinkedList();
