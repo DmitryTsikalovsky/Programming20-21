@@ -6,66 +6,84 @@
 #define GIT_HASHTABLE_H
 using namespace std;
 
-template<class T> struct Item {
-    T data;
-    struct Item<T> *next;
+template<class T, class V> struct Item {
+    T key;
+    V value;
+    struct Item<T,V> *next;
+    bool isEmpty = true;
 };
 
-template<class T> class HashTable {
+template<class T, class V> class HashTable {
     int maxSize;
-    int key;
-    Item<T>* array;
-    int (*hashFunction)(const T& data, int maxSize, int key);
+    int hashKey;
+    Item<T,V>* array;
+    int (*hashFunction)(const T& key, int maxSize, int hashKey);
 public:
 
-    HashTable(int inputMaxSize, int inputKeyHash, int (*inputHashFunction)(const T& data, int maxSize, int key)){
+    HashTable(int inputMaxSize, int inputHashKey, int (*inputHashFunction)(const T& key, int maxSize, int hashKey)){
         this->maxSize = inputMaxSize;
-        this->key = inputKeyHash;
+        this->hashKey = inputHashKey;
         this->hashFunction = inputHashFunction;
-        array = new Item<T>[maxSize];
+        array = new Item<T,V>[maxSize];
     }
     
-    bool search(const T& data){
-        Item<T>* ptr = &array[hashFunction(data, maxSize, key)];
-
-        while (ptr != nullptr && ptr->data != data){
+    bool search(const T& key){
+        Item<T,V>* ptr = &array[hashFunction(key, maxSize, hashKey)];
+        while (ptr != nullptr && ptr->key != key){
             ptr = ptr->next;
         }
+        if (ptr == nullptr) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
-    void add(const T& data){
-        if(!search(data)) {
-            int index = hashFunction(data, maxSize, key);
-            Item<T> *ptr = &array[index];
-            Item<T> *newPtr = new Item<T>;
-            ptr->data = data;
-            newPtr->data = data;
-            newPtr->next = ptr->next;
-            ptr->next = newPtr;
+    void add(const T& key){ // и V value;
+        if(!search(key)) {
+            Item<T,V> *ptr = &array[hashFunction(key, maxSize, hashKey)];
+            if (ptr->isEmpty) {
+                ptr->key = key;
+                ptr->isEmpty = false;
+            } else {
+                Item<T,V> *newPtr = new Item<T,V>;
+                newPtr->key = key;
+                newPtr->isEmpty = false;
+                ptr->next = newPtr;
+            }
         }
     }
-    void remove(const T& data){
-        if(!search(data)) {
-            int index = hashFunction(data, maxSize, key);
-            Item<T>* ptr = &array[index];
-            Item<T>* ptrPrev = ptr;
-            if(ptr->data == data) {
-                array[index] = nullptr;
+    void remove(const T& key){
+        if(search(key)) {
+            Item<T,V>* ptr = &array[hashFunction(key, maxSize, hashKey)];
+            Item<T,V>* ptrPrev = ptr;
+            if(ptr->key == key) {
+                if (ptr->next != nullptr) {
+                    ptr->key = ptr->next->key;
+                    ptrPrev = ptr->next;
+                    ptr->next = ptrPrev->next;
+                    delete ptrPrev;
+                } else {
+                    ptr->isEmpty = true;
+                }
+            } else {
+                while (ptr->key != key && ptr != nullptr){
+                    ptrPrev = ptr;
+                    ptr = ptr->next;
+                }
+                if(ptr->next) ptrPrev->next = ptr->next;
                 delete ptr;
             }
-            while (ptr->data != data && ptr != nullptr){
-                ptrPrev = ptr;
-                ptr = ptr->next;
-            }
-            if(ptr->next) ptrPrev->next = ptr->next;
-            delete ptr;
         }
     }
-    void print(void (*printTemplate)(const T& data)){
+    void print(void (*printTemplate)(const T& key)){ // заменим потом параметр на V, будет печатать именно value
         for (int i = 0; i < maxSize; ++i) {
-            Item<T>* ptr = &array[i];
+            Item<T,V>* ptr = &array[i];
             while (ptr != nullptr){
-                printTemplate(ptr->data);
+                if (!ptr->isEmpty) {
+                    printTemplate(ptr->key);
+                    std::cout<<" ";
+                }
                 ptr = ptr->next;
             }
         }
