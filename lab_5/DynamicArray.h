@@ -3,205 +3,186 @@
 //
 #include <iostream>
 #include <cassert>
+#include <cstring>
+#include <stdlib.h>
 #include "Sequence.h"
 using namespace std;
 #ifndef CPP_DYNAMICARRAY_H
 #define CPP_DYNAMICARRAY_H
 
-template<class T> class DynamicArray: public Sequence<T>{
+template<class T, class V> class DynamicArray: public sequence<T>{
     T *data;
     int size;
     int capacity;
 public:
-    T& operator[](int index) override;
+    T& operator[](int index) override{
+        assert(index < size && "Ошибка: Вы пытаетесь указать индекс, выходит за заполненное пространство массива");
+        return data[index];
+    }
 
-    DynamicArray();
+    DynamicArray(){
+        size = 0;
+        capacity = 1;
+        this->data = (T*)calloc(capacity, sizeof(T));
+    }
 
-    explicit DynamicArray(int inputsize);
+    explicit DynamicArray(int inputsize){
+        size = inputsize;
+        capacity = inputsize;
+        this->data = (T*)calloc(inputsize, sizeof(T));
+    }
 
-    DynamicArray(T* items, int inputSize);
-    DynamicArray(const DynamicArray<T> &other);
-    ~DynamicArray() override;
-    void append(T value) override;
-    // класс сорт в котором сортировки по типу данных
-//    void sort(bool (*function)(T data1, T data2), int type) override;
-//    void bubble_sort(bool (*function)(T data1, T data2));
-//    void choices_sort(bool (*function)(T data1, T data2));
-//    void quick_sort(bool (*function)(T data1, T data2));
-//    void quick_sort_func(bool (*function)(T data1, T data2), int low, int high);
-//    int partition(bool (*function)(T data1, T data2), int low, int high);
-//    void merge_sort(bool (*function)(T data1, T data2));
-//    void merge_sort_func(bool (*function)(T data1, T data2), int low, int high);
-//    void merge_sort_func2(bool (*function)(T data1, T data2), int first, int last);
+    DynamicArray(T* items, int inputSize){
 
-    void appendClass(const T& value);
-    void deleteOne(int index) override;
-    void subSequence(int startIndex, int endIndex,   Sequence<T>* Sub) override;
-    void concat(Sequence<T>* Sub) override;
-    int getSize() override;
+    }
 
-    T getFirst() override;
-    T getLast() override;
+    DynamicArray(DynamicArray<T,V> &other): DynamicArray(other.data, other.size){
+        data = (T*)calloc(other.capacity, sizeof(T));
+        size = other.size;
+        capacity = other.capacity;
+        std::memcpy(data,other.data, sizeof(T));
+    }
 
-    void prepend(T data) override;
-    void resize(int newSize);
-    void set(int index, T value) override;
-    void map(T (*function)(T data, int option), int option)override;
-    void where(bool (*function)(T data, int option), int option) override;
-};
+    ~DynamicArray() override{
+        size = 0;
+        capacity = 0;
+        free(this->data);
+    }
 
-template<class T> T& DynamicArray<T>::operator[](int index) {
-    assert(index < size && "Ошибка: Вы пытаетесь указать индекс, выходит за заполненное пространство массива");
-    return data[index];
-}
-
-template<class T> DynamicArray<T>::DynamicArray(){
-    size = 0;
-    capacity = 1;
-    this->data = (T*)calloc(capacity, sizeof(T));
-}
-
-template<class T> DynamicArray<T>:: DynamicArray(int inputsize){
-    size = inputsize;
-    capacity = inputsize;
-    this->data = (T*)calloc(inputsize, sizeof(T));
-}
-
-template<class T> DynamicArray<T>:: DynamicArray(T* items, int inputSize):DynamicArray(inputSize) {
-        for (int i = 0; i < inputSize; ++i) {
-            this->data[i] = items[i];
+    void append(T value) override{
+        if(this->size + 1 > this->capacity) {
+            resize(this->capacity * 2);
         }
-}
-
-template<class T> DynamicArray<T>:: DynamicArray(const DynamicArray<T> &other): DynamicArray(other.data, other.size){
-
-}
-
-template<class T> DynamicArray<T>:: ~DynamicArray(){
-    size = 0;
-    capacity = 0;
-    free(this->data);
-}
-
-template<class T> void DynamicArray<T>::append(T value){
-    if(this->size + 1 > this->capacity) {
-    resize(this->capacity + 10);
+        this->data[this->size] = value;
+        this->size++;
     }
-    this->data[this->size] = value;
-    this->size++;
-}
-template<class T> void DynamicArray<T>::appendClass(const T& value) {
-    if(this->size + 1 > this->capacity) {
-        resize(this->capacity + 10);
-    }
-    this->data[this->size] = value;
-    this->size++;
-}
-template<class T> void DynamicArray<T>::deleteOne(int index){
-    if (index > size || index < 0 || size == 0){
-    cout << "Индекс выходит за область заполенных значений, или же отсутсвтуют элементы" << endl;
-    return;
-    }
-    for (int i = index; i < size; ++i) {
-    data[i] = data[i+1];
-    }
-    size--;
-}
 
-template<class T> void DynamicArray<T>::subSequence(int startIndex,int endIndex,   Sequence<T>* Sub)  {
-    if (startIndex < size && size > endIndex && startIndex < endIndex  && startIndex >= 0 && endIndex > 0) {
-        if (Sub->getSize() > 0) {
+    void appendClass(const T& value){
+        if(this->size + 1 > this->capacity) {
+            resize(this->capacity + 10);
+        }
+        this->data[this->size] = value;
+        this->size++;
+    }
+
+    void deleteOne(int index) override{
+        if (index > size || index < 0 || size == 0){
+            cout << "Индекс выходит за область заполенных значений, или же отсутсвтуют элементы" << endl;
             return;
         }
-        for (int i = startIndex; i <= endIndex; ++i) {
-            Sub->append(this->data[i]);
+        for (int i = index; i < size; ++i) {
+            data[i] = data[i+1];
         }
-    } else {
-        cout << "Ошибка: Начальный индекс больше конечного/Конечный индекс больше максимального/Пустой массив" << endl;
+        size--;
     }
 
-}
-
-template<class T>  void DynamicArray<T>:: concat(Sequence<T>* Sub){
-    for (int i = 0; i < Sub->getSize(); ++i) {
-        append((*Sub)[i]);
-    }
-}
-template<class T> int DynamicArray<T>::getSize() { return size;}
-
-template<class T> T DynamicArray<T>::getFirst()  {
-    return data[0];
-}
-
-template<class T>  T DynamicArray<T>::getLast() {
-    return data[size-1];
-}
-
-template<class T>  void DynamicArray<T>::prepend(T data) {
-    if(size + 1 > capacity) {
-        resize(capacity + 10);
-    }
-    if(size == 0) {
-        append(data);
-    } else if(size == 1) {
-        this->data[1] = this->data[0];
-        this->data[0] = data;
-        size++;
-    }else {
-        for (int i = size-1; i >= 0; --i) {
-        this->data[i+1] = this->data[i];
-    }
-        this->data[0] = data;
-        size++;
-    }
-
-}
-
-template<class T>  void DynamicArray<T>::resize(int newSize) {
-    if (newSize == capacity) {
-        return;
-    }
-    if (newSize > capacity){
-        T *newData = (T*)calloc(newSize, sizeof(T));
-        memcpy(newData, this->data, sizeof(T));
-        free(this->data);
-        this->data = newData;
-        capacity = newSize;
-    } else {
-        capacity = newSize;
-    }
-}
-
-template<class T>  void DynamicArray<T>:: set(int index, T value) {
-    if(index > size + 1) {
-        cout << "Ошибка: Вы пытаетесь указать индекс, который создаёт пустое пространство внутри массива" << endl;
-        return;
-    } else {
-        if(size + 1 > capacity) {
-        resize(capacity + 10);
-    }
-        this->data[index] = value;
-    }
-
-}
-template<class T>  void DynamicArray<T>:: map(T (*function)(T data, int option), int option) {
-    for (int i = 0; i < size; ++i) {
-        data[i] = function(data[i], option);
-    }
-}
-template<class T> void DynamicArray<T>:: where(bool (*function)(T data, int option), int option) {
-    int i = 0;
-    int newSize = 0;
-    while(i < size) {
-        if (!function(this->data[i], option)){
-            i++;
+    void subSequence(int startIndex, int endIndex,   sequence<T>* Sub) override{
+        if (startIndex < size && size > endIndex && startIndex < endIndex  && startIndex >= 0 && endIndex > 0) {
+            if (Sub->getSize() > 0) {
+                return;
+            }
+            for (int i = startIndex; i <= endIndex; ++i) {
+                Sub->append(this->data[i]);
+            }
         } else {
-            this->data[newSize] = this->data[i];
-            newSize++;
-            i++;
+            cout << "Ошибка: Начальный индекс больше конечного/Конечный индекс больше максимального/Пустой массив" << endl;
         }
     }
-    size = newSize;
-}
+
+    void concat(sequence<T>* Sub) override{
+        for (int i = 0; i < Sub->getSize(); ++i) {
+            append((*Sub)[i]);
+        }
+    }
+
+    int getSize() override{ return size;}
+    T& search(V& key,bool (*searchFunction)(const T& data, const V& key)){
+        for (int i = 0; i < size; ++i) {
+            if (searchFunction(data[i], key)) return  data[i];
+        }
+    }
+
+    T& getFirst() override{
+        return data[0];
+    }
+
+    T getLast() override{
+        return data[size-1];
+    }
+
+    void remove(T& removeData){
+        for (int i = 0; i < size; ++i) {
+            if (data[i == removeData]) deleteOne(i);
+        }
+    }
+
+    void prepend(T data) override{
+        if(size + 1 > capacity) {
+            resize(capacity + 10);
+        }
+        if(size == 0) {
+            append(data);
+        } else if(size == 1) {
+            this->data[1] = this->data[0];
+            this->data[0] = data;
+            size++;
+        }else {
+            for (int i = size-1; i >= 0; --i) {
+                this->data[i+1] = this->data[i];
+            }
+            this->data[0] = data;
+            size++;
+        }
+    }
+
+    void resize(int newSize){
+        if (newSize == capacity) {
+            return;
+        }
+        if (newSize > capacity){
+            T *newData = (T*)calloc(newSize, sizeof(T));
+            std::memcpy(newData, this->data, sizeof(T));
+            free(this->data);
+            this->data = newData;
+            capacity = newSize;
+        } else {
+            capacity = newSize;
+        }
+    }
+
+    void set(int index, T value) override{
+        if(index > size + 1) {
+            cout << "Ошибка: Вы пытаетесь указать индекс, который создаёт пустое пространство внутри массива" << endl;
+            return;
+        } else {
+            if(size + 1 > capacity) {
+                resize(capacity + 10);
+            }
+            this->data[index] = value;
+        }
+    }
+
+    void map(T (*function)(T data, int option), int option)override{
+        for (int i = 0; i < size; ++i) {
+            data[i] = function(data[i], option);
+        }
+    }
+
+    void where(bool (*function)(T data, int option), int option) override{
+        int i = 0;
+        int newSize = 0;
+        while(i < size) {
+            if (!function(this->data[i], option)){
+                i++;
+            } else {
+                this->data[newSize] = this->data[i];
+                newSize++;
+                i++;
+            }
+        }
+        size = newSize;
+    }
+};
+
 
 #endif //CPP_DYNAMICARRAY_H
