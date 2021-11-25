@@ -109,12 +109,12 @@ public:
     T getLast() override{
         return data[size-1];
     }
-
-    void remove(T& removeData){
-        for (int i = 0; i < size; ++i) {
-            if (data[i == removeData]) deleteOne(i);
-        }
-    }
+//
+//    void remove(T& removeData){
+//        for (int i = 0; i < size; ++i) {
+//            if (removeData == data[i]) deleteOne(i);
+//        }
+//    }
 
     void prepend(T data) override{
         if(size + 1 > capacity) {

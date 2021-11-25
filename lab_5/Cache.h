@@ -35,19 +35,21 @@ public:
         bigData->append(data);
     }
 
-    void remove(T& key, V& data){
-        hashTable->remove(key);
-        bigData->remove(data);
-    }
+//    void remove(T& key, V& data){
+//        hashTable->remove(key);
+//        bigData->remove(data);
+//    }
 
-    V& get(T& key, bool (*searchFunction)(const T& key)){
+    V& get(T& key, bool (*searchFunction)(const V& data, const T& key)){
         if (hashTable->search(key)){
             return hashTable->get(key);
         } else {
             V result = bigData->search(key, searchFunction);
-            if (hashTable->getSize() >= cacheSize || (queue.pop().timeCreate + timeStemp < clock()) ){
-                hashTable->remove(queue.pop().key);
-                queue.remove();
+            if (queue.getSize() != 0) {
+                if (hashTable->getSize() >= cacheSize || (queue.pop().timeCreate) ){
+                    hashTable->remove(queue.pop().key);
+                    queue.remove();
+                }
             }
             hashTable->add(key, result);
             queue.push(newItem(key));

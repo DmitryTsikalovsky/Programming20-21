@@ -9,7 +9,7 @@ using namespace std;
 template<class V, class T> struct ItemHash {
     T key;
     V value;
-    struct ItemHash<T,V> *next;
+    struct ItemHash<V,T> *next;
     bool isEmpty = true;
 };
 
@@ -34,7 +34,7 @@ public:
     }
     
     bool search(const T& key){
-        ItemHash<T,V>* ptr = &array[hashFunction(key, maxSize, hashKey)];
+        ItemHash<V,T>* ptr = &array[hashFunction(key, maxSize, hashKey)];
         while (ptr != nullptr && ptr->key != key){
             ptr = ptr->next;
         }
@@ -47,13 +47,13 @@ public:
 
     void add(const T& key, const V& value){ // и V value;
         if(!search(key)) {
-            ItemHash<T,V> *ptr = &array[hashFunction(key, maxSize, hashKey)];
+            ItemHash<V,T> *ptr = &(array[hashFunction(key, maxSize, hashKey)]);
             if (ptr->isEmpty) {
                 ptr->key = key;
                 ptr->value = value;
                 ptr->isEmpty = false;
             } else {
-                ItemHash<T,V> *newPtr = new ItemHash<T,V>;
+                ItemHash<V,T> *newPtr = new ItemHash<V,T>;
                 newPtr->key = key;
                 newPtr->value = value;
                 newPtr->isEmpty = false;
@@ -62,10 +62,10 @@ public:
             size++;
         }
     }
-    void remove(const T& key){
+    void remove(T& key){
         if(search(key)) {
-            ItemHash<T,V>* ptr = &array[hashFunction(key, maxSize, hashKey)];
-            ItemHash<T,V>* ptrPrev = ptr;
+            ItemHash<V,T>* ptr = &array[hashFunction(key, maxSize, hashKey)];
+            ItemHash<V,T>* ptrPrev = ptr;
             if(ptr->key == key) {
                 if (ptr->next != nullptr) {
                     ptr->key = ptr->next->key;
@@ -88,7 +88,7 @@ public:
     }
     void print(void (*printTemplate)(const V& value)){ // заменим потом параметр на V, будет печатать именно value
         for (int i = 0; i < maxSize; ++i) {
-            ItemHash<T,V>* ptr = &array[i];
+            ItemHash<V,T>* ptr = &array[i];
             while (ptr != nullptr){
                 if (!ptr->isEmpty) {
                     printTemplate(ptr->value);
@@ -102,7 +102,7 @@ public:
 
     V& get(const T& key) {
         if(search(key)) {
-            ItemHash<T,V>* ptr = &array[hashFunction(key, maxSize, hashKey)];
+            ItemHash<V,T>* ptr = &array[hashFunction(key, maxSize, hashKey)];
             return ptr->value;
         }
     }

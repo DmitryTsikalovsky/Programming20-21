@@ -8,9 +8,9 @@ using namespace std;
 #ifndef CPP_QUEUE_H
 #define CPP_QUEUE_H
 
-template<class V>struct ItemQueue{
-    V key;
-    int timeCreate;
+template<class T>struct ItemQueue{
+    T key;
+    time_t timeCreate;
 };
 
 template<class T>class Queue {
@@ -23,6 +23,11 @@ public:
     void push(T data){
         List->append(data);
     }
+
+    int getSize(){
+        return List->size;
+    }
+
     T& pop(){
         return List->getFirst();
     }

@@ -3,6 +3,21 @@
 #include "Queue.h"
 #include "Cache.h"
 #include <string>
+#include <chrono>
+#include <cmath>
+
+class Timer {
+    std::chrono::time_point<std::chrono::system_clock> m_StartTime;
+public:
+    void Start(){
+        m_StartTime = chrono::high_resolution_clock::now();
+    }
+
+    double_t GetDuration(){
+        chrono::duration<double_t> duration = chrono::high_resolution_clock::now() - m_StartTime;
+        return duration.count();
+    }
+};
 
 int hashFunction(const std::string& s, int table_size, int key)
 {
@@ -29,7 +44,7 @@ bool searchPeopleByName(const People& data, const std::string& key){
 int main(){
 
     //Проверка хеш таблицы
-//    HashTable<std::string, People> testTable(10, 5,&hashFunction);
+//    HashTable<People, std::string> testTable(10,&hashFunction);
     People John;
     People Jame;
     People David;
@@ -39,7 +54,7 @@ int main(){
     Jame.number = 7654321;
     David.name = "David";
     David.number = 89101112;
-//
+
 //    testTable.add(John.name, John);
 //    testTable.add(Jame.name, Jame);
 //    testTable.add(David.name, David);
@@ -74,5 +89,14 @@ int main(){
     Georgy.number = 1991;
     testCache.add(Georgy);
     testCache.add(Georgy);
+
+    Timer timer;
+    timer.Start();
+    cout<< testCache.get(Georgy.name, &searchPeopleByName).name << " " << timer.GetDuration() << endl;
+    timer.Start();
+    cout<< testCache.get(Georgy.name, &searchPeopleByName).name << " " << timer.GetDuration()<< endl;
+
+
+
 
 }
