@@ -28,6 +28,10 @@ public:
         return List->size;
     }
 
+    ItemQueue<T>& search(const T& key){
+
+    }
+
     T& pop(){
         return List->getFirst();
     }
