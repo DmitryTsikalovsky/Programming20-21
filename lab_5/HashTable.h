@@ -9,7 +9,7 @@ using namespace std;
 template<class V, class T> struct ItemHash {
     T key;
     V value;
-    struct ItemHash<V,T> *next;
+    struct ItemHash<V,T> *next = nullptr;
     bool isEmpty = true;
 };
 
@@ -34,18 +34,19 @@ public:
     }
     
     bool search(const T& key){
-        ItemHash<V,T>* ptr = &array[hashFunction(key, maxSize, hashKey)];
-        while (ptr != nullptr && ptr->key != key){
+        int index = hashFunction(key, maxSize, hashKey);
+        ItemHash<V,T>* ptr = &array[index];
+        while (ptr->isEmpty == false && ptr->key != key){
             ptr = ptr->next;
         }
-        if (ptr == nullptr) {
+        if (ptr->isEmpty == true) {
             return false;
         } else {
             return true;
         }
     }
 
-    void add(const T& key, const V& value){ // и V value;
+    void add(const V& value, const T& key){ // и V value;
         if(!search(key)) {
             ItemHash<V,T> *ptr = &(array[hashFunction(key, maxSize, hashKey)]);
             if (ptr->isEmpty) {
@@ -62,7 +63,7 @@ public:
             size++;
         }
     }
-    void remove(T& key){
+    void remove(const T& key){
         if(search(key)) {
             ItemHash<V,T>* ptr = &array[hashFunction(key, maxSize, hashKey)];
             ItemHash<V,T>* ptrPrev = ptr;
@@ -101,10 +102,8 @@ public:
     }
 
     V& get(const T& key) {
-        if(search(key)) {
-            ItemHash<V,T>* ptr = &array[hashFunction(key, maxSize, hashKey)];
-            return ptr->value;
-        }
+        ItemHash<V,T>* ptr = &array[hashFunction(key, maxSize, hashKey)];
+        return ptr->value;
     }
 };
 

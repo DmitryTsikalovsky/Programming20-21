@@ -106,7 +106,7 @@ public:
         return data[0];
     }
 
-    T getLast() override{
+    T& getLast() override{
         return data[size-1];
     }
 //

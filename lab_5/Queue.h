@@ -20,8 +20,8 @@ public:
     Queue(){
         List = new LinkedList<T>;
     }
-    void push(T data){
-        List->append(data);
+    void push(const T key){
+        List->append(key);
     }
 
     int getSize(){

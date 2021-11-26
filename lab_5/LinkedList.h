@@ -164,15 +164,11 @@ public:
         }
     }
     T& getFirst() override{
-        if (list->head){
-            return list->head->data;
-        }
+        return list->head->data;
     }
 
-    T getLast() override{
-        if (list->head)  {
-            return list->tail->data;
-        }
+    T& getLast() override {
+        return list->tail->data;
     }
 
     void map(T (*function)(T data, int option), int option) override{

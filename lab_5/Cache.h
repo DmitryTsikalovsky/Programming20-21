@@ -10,50 +10,48 @@
 
 
 
-template<class T> ItemQueue<T> newItem(T& inputKey){
+template<class T> ItemQueue<T> newItem(const T& inputKey){
     ItemQueue<T> newItem;
     newItem.key = inputKey;
     newItem.timeCreate = clock();
     return newItem;
 }
 
-template<class T, class V> class Cache {
-    DynamicArray<V,T> *bigData;
+template<class V, class T> class Cache {
     HashTable<V,T> *hashTable;
     Queue<ItemQueue<T>> queue; // в очереди хранится другая структура с ключом и тайм при запросе будет удалять из хеш таблицы что то
     int cacheSize;
     time_t timeStemp;
 public:
-    Cache(DynamicArray<V,T>& inputArray, int (*inputHashFunction)(const T& key, int maxSize, int hashKey),int inputCacheSize, time_t inputTimeStemp){
-        bigData = new DynamicArray<V,T>(inputArray);
+    Cache(int (*inputHashFunction)(const T& key, int maxSize, int hashKey),int inputCacheSize, time_t inputTimeStemp){
         cacheSize = inputCacheSize;
         timeStemp = inputTimeStemp;
         hashTable = new HashTable<V,T>(inputCacheSize, inputHashFunction);
     }
 
-    void add(V& data){
-        bigData->append(data);
-    }
-
-//    void remove(T& key, V& data){
-//        hashTable->remove(key);
-//        bigData->remove(data);
-//    }
-
-    V& get(T& key, bool (*searchFunction)(const V& data, const T& key)){
-        if (hashTable->search(key)){
-            return hashTable->get(key);
-        } else {
-            V result = bigData->search(key, searchFunction);
-            if (queue.getSize() != 0) {
-                if (hashTable->getSize() >= cacheSize || (queue.pop().timeCreate) ){
-                    hashTable->remove(queue.pop().key);
-                    queue.remove();
-                }
+    void add(const V& data, const T& key){
+        if (queue.getSize() != 0) {
+            if (hashTable->getSize() >= cacheSize || (queue.pop().timeCreate < (clock() - timeStemp) ) ){
+                hashTable->remove(queue.pop().key);
+                queue.remove();
             }
-            hashTable->add(key, result);
+        }
+        if (!hashTable->search(key)) {
+            hashTable->add(data, key);
             queue.push(newItem(key));
         }
+
+
+    }
+
+    V& get(const T& key){
+        if (queue.getSize() != 0) {
+            if (hashTable->getSize() >= cacheSize || (queue.pop().timeCreate) ){
+                hashTable->remove(queue.pop().key);
+                queue.remove();
+            }
+        }
+        return hashTable->get(key);
     }
 };
 
