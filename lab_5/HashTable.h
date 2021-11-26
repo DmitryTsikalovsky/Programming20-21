@@ -36,10 +36,12 @@ public:
     bool search(const T& key){
         int index = hashFunction(key, maxSize, hashKey);
         ItemHash<V,T>* ptr = &array[index];
-        while (ptr->isEmpty == false && ptr->key != key){
+        while (ptr != nullptr && ptr->key != key){
             ptr = ptr->next;
         }
-        if (ptr->isEmpty == true) {
+        if (ptr == nullptr) {
+            return false;
+        } else if (ptr->isEmpty == true) {
             return false;
         } else {
             return true;
@@ -70,6 +72,7 @@ public:
             if(ptr->key == key) {
                 if (ptr->next != nullptr) {
                     ptr->key = ptr->next->key;
+                    ptr->value =  ptr->next->value;
                     ptrPrev = ptr->next;
                     ptr->next = ptrPrev->next;
                     delete ptrPrev;
@@ -103,6 +106,9 @@ public:
 
     V& get(const T& key) {
         ItemHash<V,T>* ptr = &array[hashFunction(key, maxSize, hashKey)];
+        while(ptr->key != key) {
+            ptr = ptr->next;
+        }
         return ptr->value;
     }
 };

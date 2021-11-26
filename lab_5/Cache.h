@@ -1,7 +1,3 @@
-//
-// Created by Dmitry Tsikalovsky on 24.11.2021.
-//
-
 #ifndef INC_2SEMPROGA_CACHE_H
 #define INC_2SEMPROGA_CACHE_H
 #include "DynamicArray.h"
@@ -31,7 +27,7 @@ public:
 
     void add(const V& data, const T& key){
         if (queue.getSize() != 0) {
-            if (hashTable->getSize() >= cacheSize || (queue.pop().timeCreate < (clock() - timeStemp) ) ){
+            if (hashTable->getSize() == cacheSize || (clock() - queue.pop().timeCreate >= timeStemp) ){
                 hashTable->remove(queue.pop().key);
                 queue.remove();
             }
@@ -44,13 +40,17 @@ public:
 
     }
 
-    V& get(const T& key){
+    bool search(const T& key){
         if (queue.getSize() != 0) {
-            if (hashTable->getSize() >= cacheSize || (queue.pop().timeCreate) ){
+            if (hashTable->getSize() == cacheSize || (clock() - queue.pop().timeCreate >= timeStemp) ){
                 hashTable->remove(queue.pop().key);
                 queue.remove();
             }
         }
+        return hashTable->search(key);
+    }
+
+    V& get(const T& key){
         return hashTable->get(key);
     }
 };

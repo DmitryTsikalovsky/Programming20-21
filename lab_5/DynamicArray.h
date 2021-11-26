@@ -10,11 +10,12 @@ using namespace std;
 #ifndef CPP_DYNAMICARRAY_H
 #define CPP_DYNAMICARRAY_H
 
-template<class T, class V> class DynamicArray: public sequence<T>{
+template<class T> class DynamicArray: public sequence<T>{
+
+public:
     T *data;
     int size;
     int capacity;
-public:
     T& operator[](int index) override{
         assert(index < size && "Ошибка: Вы пытаетесь указать индекс, выходит за заполненное пространство массива");
         return data[index];
@@ -27,20 +28,19 @@ public:
     }
 
     explicit DynamicArray(int inputsize){
-        size = inputsize;
-        capacity = inputsize;
+        this->size = inputsize;
+        this->capacity = inputsize;
         this->data = (T*)calloc(inputsize, sizeof(T));
     }
 
-    DynamicArray(T* items, int inputSize){
-
+    DynamicArray(T* items, int inputSize):DynamicArray(inputSize){
+        for (int i = 0; i < inputSize; ++i) {
+            this->data[i] = items[i];
+        }
     }
 
-    DynamicArray(DynamicArray<T,V> &other): DynamicArray(other.data, other.size){
-        data = (T*)calloc(other.capacity, sizeof(T));
-        size = other.size;
-        capacity = other.capacity;
-        std::memcpy(data,other.data, sizeof(T));
+    DynamicArray(DynamicArray<T> &other): DynamicArray(other.data, other.size){
+
     }
 
     ~DynamicArray() override{
@@ -96,11 +96,6 @@ public:
     }
 
     int getSize() override{ return size;}
-    T& search(V& key,bool (*searchFunction)(const T& data, const V& key)){
-        for (int i = 0; i < size; ++i) {
-            if (searchFunction(data[i], key)) return  data[i];
-        }
-    }
 
     T& getFirst() override{
         return data[0];

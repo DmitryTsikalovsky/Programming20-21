@@ -5,6 +5,7 @@
 #include <string>
 #include <chrono>
 #include <cmath>
+#include <fstream>
 
 //class Timer {
 //    std::chrono::time_point<std::chrono::system_clock> m_StartTime;
@@ -29,7 +30,7 @@ int hashFunction(const std::string& s, int table_size, int key)
 
 int idHashFunction(const int &s, int table_size, int key)
 {
-    return (s * key) % table_size;
+    return (s + key) % table_size;
 }
 
 class People {
@@ -50,72 +51,49 @@ bool searchPeopleById(const People& data, const int &key){
     if(data.id == key){return true;}else{return false;}
 }
 
+People *genRandomPeople(int n){
+    auto *line = new std::string[617];
+
+    std::ifstream in("/home/dima/CLionProjects/git/Programming20-21/lab_5/Names.txt"); // окрываем файл для чтения
+    if (in.is_open())
+    {
+        int i = 0;
+        while (getline(in, line[i])){
+//            std::cout<< line[i]<<endl;
+            i++;
+        }
+
+    }
+    in.close();
+    People *insertPeople = new People[n];
+    for (int i = 0; i < n; ++i) {
+        insertPeople[i].name = line[rand() % 616];
+        insertPeople[i].number = rand() % 100;
+        insertPeople[i].id = i;
+    }
+    return insertPeople;
+}
+
 
 int main(){
 
-    //Проверка хеш таблицы
-//    HashTable<People, std::string> testTable(10,&hashFunction);
-    People John;
-    People Jame;
-    People David;
-    John.name = "John";
-    John.number = 1234567;
-    John.id = 1;
-    Jame.name = "Jame";
-    Jame.id = 2;
-    Jame.number = 7654321;
-    David.name = "David";
-    David.id = 3;
-    David.number = 89101112;
+    DynamicArray<People> bigData(genRandomPeople(10000), 10000);
+    for (int i = 0; i < 10000; ++i) {
+        cout<< bigData[i].name << " "<< endl;
+    }
+    Cache<People, int> theBestCacheInTheWorld(idHashFunction, 100,10000);
 
-//    testTable.add(John.name, John);
-//    testTable.add(Jame.name, Jame);
-//    testTable.add(David.name, David);
-//    testTable.print(printPeople);
+    for (int i = 0; i < 999; ++i) {
+        theBestCacheInTheWorld.add(bigData[i], bigData[i].id);
+    }
 
-    //Проверка очереди
-//    Queue<ItemQueue<std::string>> testQueue;
-//    testQueue.push(newItem(John.name));
-//    testQueue.push(newItem(Jame.name));
-//    testQueue.push(newItem(David.name));
-//    People Out;
-//
-//    for (int i = 0; i < 3; ++i) {
-//        cout<<testQueue.pop().key<< " ";
-//        testQueue.remove();
-//    }
-    //Проверка динамик аррея
-    DynamicArray<People, int> testArray;
-    testArray.append(Jame);
-    testArray.append(John);
-    testArray.append(David);
-//    for (int i = 0; i < 3; ++i) {
-//        cout<< testArray[i].number << " ";
-//    }
-//    cout<<endl;
-//    People result = testArray.search(Jame.name,searchPeopleByName);
-//    cout<< result.name << " ";
-
-    Cache<People,int> testCache(idHashFunction, 3, 5000);
-    People Georgy;
-    Georgy.name = "Georgy";
-    Georgy.number = 1991;
-    Georgy.id = 4;
-    testCache.add(Georgy, Georgy.id);
-    testCache.add(Jame, Jame.id);
-    testCache.add(John, John.id);
-    testCache.add(David, David.id);
-
-//    Timer timer;
-//    timer.Start();
-//    cout<< testCache.get(Georgy.name, &searchPeopleByName).name << " " << timer.GetDuration() << endl;
-      cout<< testCache.get(Georgy.id).name << " "<< endl;
-      cout<< testCache.get(Jame.id).name << " "<< endl;
-
-      cout<< testCache.get(John.id).name << " "<< endl;
-
-//    timer.Start();
-//    cout<< testCache.get(Georgy.name, &searchPeopleByName).name << " " << timer.GetDuration()<< endl;
+    for (int i = 0; i < 1000; ++i) {
+        if (theBestCacheInTheWorld.search(bigData[i].id)){
+            cout<< theBestCacheInTheWorld.get(bigData[i].id).id << " "<< endl;
+        }
+    }
+//    std::cout<< endl;
+//    std::cout<< theBestCacheInTheWorld.get(bigData[0].id).name << " "<< endl;
 
 
 
