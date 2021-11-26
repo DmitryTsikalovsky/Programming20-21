@@ -49,7 +49,7 @@ public:
         free(this->data);
     }
 
-    void append(T value) override{
+    void append(const T& value) override{
         if(this->size + 1 > this->capacity) {
             resize(this->capacity * 2);
         }
@@ -111,7 +111,7 @@ public:
 //        }
 //    }
 
-    void prepend(T data) override{
+    void prepend(const T& data) override{
         if(size + 1 > capacity) {
             resize(capacity + 10);
         }

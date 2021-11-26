@@ -13,8 +13,8 @@ public:
     virtual void deleteOne(int index) = 0; // Удаление элемента по Заданному индексу
     virtual void map(T (*function)(T data, int option), int option) = 0; // Функция map, Применяющая данную ей функцию для каждого элмента
     virtual void where(bool (*function)(T data, int option), int option) = 0;// Функция where, с помощью переданной в неё функции фильтрующая элементы, удаляя те, для которых из функции возвращён false
-    virtual void append(T data) = 0; // Добавление нового элемента в конец
-    virtual void prepend(T data) = 0; // Добавление нового в начало
+    virtual void append(const T& data) = 0; // Добавление нового элемента в конец
+    virtual void prepend(const T& data) = 0; // Добавление нового в начало
     virtual T& getLast() = 0; // Получение данных, находящихся в последнем элементе
     virtual int getSize() = 0; // Получение количества заполненных элементов
     virtual T& getFirst() = 0;// Получение данных, находящихся в первом элементе

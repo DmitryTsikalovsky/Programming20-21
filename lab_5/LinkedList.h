@@ -114,7 +114,7 @@ public:
         }
     }
 
-    void append(T data) override{
+    void append(const T& data) override{
         ItemList<T> *ptr = (ItemList<T> *) calloc(1, sizeof(ItemList<T>));
         if (!ptr) {
             return;
@@ -134,7 +134,7 @@ public:
 
     int getSize() override{return size;}
 
-    void prepend(T data) override{
+    void prepend(const T& data) override{
         ItemList<T> *ptr = (ItemList<T> *) calloc(1, sizeof(ItemList<T>));
         if (!ptr) {
             return;
