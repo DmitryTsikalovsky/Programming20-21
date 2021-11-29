@@ -4,6 +4,7 @@
 
 #ifndef GIT_HASHTABLE_H
 #define GIT_HASHTABLE_H
+
 using namespace std;
 
 template<class V, class T> struct ItemHash {
@@ -27,7 +28,7 @@ public:
 
     HashTable(int inputMaxSize, int (*inputHashFunction)(const T& key, int maxSize, int hashKey)){
         this->maxSize = inputMaxSize;
-        this->hashKey = rand() % 10;
+        this->hashKey = rand() % 10; //
         this->hashFunction = inputHashFunction;
         array = new ItemHash<V,T>[maxSize];
         size = 0;

@@ -1,5 +1,6 @@
 #include <iostream>
 #include "HashTable.h"
+#include "DynamicArray.h"
 #include "Queue.h"
 #include "Cache.h"
 #include <string>
@@ -7,18 +8,18 @@
 #include <cmath>
 #include <fstream>
 
-//class Timer {
-//    std::chrono::time_point<std::chrono::system_clock> m_StartTime;
-//public:
-//    void Start(){
-//        m_StartTime = std::chrono::high_resolution_clock::now();
-//    }
-//
-//    double_t GetDuration(){
-//        chrono::duration<double_t> duration = chrono::high_resolution_clock::now() - m_StartTime;
-//        return duration.count();
-//    }
-//};
+class Timer {
+    std::chrono::time_point<std::chrono::high_resolution_clock> m_StartTime;
+public:
+    void Start(){
+        m_StartTime = std::chrono::high_resolution_clock::now();
+    }
+
+    double_t GetDuration(){
+        chrono::duration<double_t> duration = chrono::high_resolution_clock::now() - m_StartTime;
+        return duration.count();
+    }
+};
 
 int hashFunction(const std::string& s, int table_size, int key)
 {
@@ -54,7 +55,7 @@ bool searchPeopleById(const People& data, const int &key){
 People *genRandomPeople(int n){
     auto *line = new std::string[617];
 
-    std::ifstream in("/home/dima/CLionProjects/git/Programming20-21/lab_5/Names.txt"); // окрываем файл для чтения
+    std::ifstream in("Names.txt"); // окрываем файл для чтения
     if (in.is_open())
     {
         int i = 0;
@@ -89,7 +90,7 @@ int main(){
 
     for (int i = 0; i < 1000; ++i) {
         if (theBestCacheInTheWorld.search(bigData[i].id)){
-            cout<< theBestCacheInTheWorld.get(bigData[i].id).id << " "<< endl;
+            cout<< theBestCacheInTheWorld.get(bigData[i].id).id<<  " "<<theBestCacheInTheWorld.get(bigData[i].id).name << endl;
         }
     }
 //    std::cout<< endl;

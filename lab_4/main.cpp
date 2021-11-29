@@ -11,7 +11,7 @@
 #include <iterator>
 
 class Timer {
-    std::chrono::time_point<std::chrono::system_clock> m_StartTime;
+    std::chrono::time_point<std::chrono::high_resolution_clock> m_StartTime;
 public:
     void Start(){
         m_StartTime = chrono::high_resolution_clock::now();
@@ -132,16 +132,16 @@ void TestTime(int sortType, int times) {
     double_t timeVector;
     double_t timeList;
     cout << "Elements  Vector  List" << endl;
-    for (int elements  = 1000; elements  <= 10000; elements+=1000 ) {
+    for (int elements  = 100000; elements  <= 100000; elements+=1000 ) {
         timeVector = 0;
         timeList = 0;
         for (int i = 0; i < times; ++i) {
             vector<int> Vector(elements);
             list <int> mylist;
             int a;
-            for (int i = 0; i < elements; ++i) {
-                a = rand() % 1000 - 1;
-                Vector[i] = a;
+            for (int j = 0; j < elements; ++j) {
+                a = rand() % 10000;
+                Vector[j] = a;
                 mylist.push_back(a);
             }
 
@@ -149,14 +149,11 @@ void TestTime(int sortType, int times) {
             std::sort(Vector.begin(), Vector.end(), &intcomp);
             timeVector += timerVector.GetDuration();
 
-            timerList.Start();
-            mylist.sort();
-            timeList += timerList.GetDuration();
+
 
         }
         timeVector = timeVector/times;
-        timeList = timeList/times;
-        cout << elements << " " << timeVector << " " << timeList << endl;
+        cout << elements << " " << timeVector << " " <<endl;
     }
 
 
