@@ -10,6 +10,7 @@
 #include <fstream>
 #include <vector>
 #include <sstream>
+#include <unordered_map>
 
 class Timer {
     std::chrono::time_point<std::chrono::high_resolution_clock> m_StartTime;
@@ -86,15 +87,31 @@ void createArrayOfWords(){
     if (in.is_open())
     {
         while (std::getline(in, line, ' ')){
+            line.erase(std::remove_if(line.begin(),
+                                      line.end(),
+                                      [](char c) { return c==','||c=='.'|| c=='!'; }));
             words.push_back(line);
         }
 
     }
-
-    for (int i = 0; i < 100; ++i) {
-        std::cout<<words[i]<<std::endl;
-    }
     in.close();
+    unordered_map<std::string, int>HashWord;
+    for (int i = 0; i < words.size(); ++i) {
+        HashWord[words[i]] += 1;
+    }
+    vector<ItemHash<int, std::string>> wordsWithNumber;
+    ItemHash<int, std::string> ItemWord;
+    for (auto iter = HashWord.begin(); iter != HashWord.end(); ++iter) {
+        ItemWord.key = iter->first;
+        ItemWord.value = iter->second;
+        wordsWithNumber.push_back(ItemWord);
+    }
+
+    sort(wordsWithNumber.begin(), wordsWithNumber.end(), [](const ItemHash<int, std::string>& n1, const ItemHash<int, std::string>& n2){return n1.value>n2.value;});
+
+    for (int i = 0; i < words.size(); ++i) {
+        cout << wordsWithNumber[i].value << " " << wordsWithNumber[i].key <<endl;
+    }
     return;
 }
 
