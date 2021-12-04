@@ -89,7 +89,8 @@ void createArrayOfWords(){
         while (std::getline(in, line, ' ')){
             line.erase(std::remove_if(line.begin(),
                                       line.end(),
-                                      [](char c) { return c==','||c=='.'|| c=='!'; }));
+                             [](char c)
+                             { return c==','||c=='.'|| c=='!'; }), line.end());
             words.push_back(line);
         }
 
@@ -109,15 +110,55 @@ void createArrayOfWords(){
 
     sort(wordsWithNumber.begin(), wordsWithNumber.end(), [](const ItemHash<int, std::string>& n1, const ItemHash<int, std::string>& n2){return n1.value>n2.value;});
 
-    for (int i = 0; i < words.size(); ++i) {
-        cout << wordsWithNumber[i].value << " " << wordsWithNumber[i].key <<endl;
+    for (auto iter = wordsWithNumber.begin(); iter != wordsWithNumber.end(); ++iter) {
+        if (iter->value != 0) {
+            cout << iter->value << " " << iter->key <<endl;
+        }
     }
     return;
 }
 
+void lessontask(const vector<int>&A, const vector<int>&B){
+    unordered_map<int, int>ImageGoodNameOfThis;
+    for (int i = 0; i < A.size(); ++i) {
+        ImageGoodNameOfThis[A[i]] = 1;
+    }
+    for (int j = 0; j < B.size(); ++j) {
+        if (ImageGoodNameOfThis[B[j]] == 1) {
+            ImageGoodNameOfThis[B[j]] = 3;
+        } else {
+            ImageGoodNameOfThis[B[j]] = 2;
+        }
+    }
+    std::cout<< "Пересечение"<<endl;
+    for (auto iter = ImageGoodNameOfThis.begin(); iter != ImageGoodNameOfThis.end(); ++iter) {
+        if (iter->second == 3){
+            std::cout<< iter->first << " " <<endl;
+        }
+    }
+    std::cout<< "Обьединение"<<endl;
+    for (auto iter = ImageGoodNameOfThis.begin(); iter != ImageGoodNameOfThis.end(); ++iter) {
+        if (iter->second == 2 || iter->second == 1 || iter->second == 3){
+            std::cout<< iter->first << " " <<endl;
+        }
+    }
+
+    std::cout<< "Вычитание"<<endl;
+    for (auto iter = ImageGoodNameOfThis.begin(); iter != ImageGoodNameOfThis.end(); ++iter) {
+        if (iter->second == 1){
+            std::cout<< iter->first << " " <<endl;
+        }
+    }
+}
+
 
 int main(){
-    createArrayOfWords();
+//    createArrayOfWords();
+//
+//    unordered_map<int, int>HashWord;
+vector<int>A = {1, 3, 5, 7, 11};
+vector<int>B = {2, 4, 5, 7, 12};
+    lessontask(A,B);
 
 //    DynamicArray<People> bigData(genRandomPeople(10000), 10000);
 //    for (int i = 0; i < 10000; ++i) {
