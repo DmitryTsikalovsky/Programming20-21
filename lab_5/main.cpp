@@ -1,8 +1,8 @@
 #include <iostream>
-#include "HashTable.h"
-#include "DynamicArray.h"
-#include "Queue.h"
-#include "Cache.h"
+#include "../lab_5/HashTable.h"
+#include "../lab_5/DynamicArray.h"
+#include "../lab_5/Queue.h"
+#include "../lab_5/Cache.h"
 #include <string>
 #include <chrono>
 #include <cmath>
@@ -145,7 +145,7 @@ void lessontask(const vector<int>&A, const vector<int>&B){
 
     std::cout<< "Вычитание"<<endl;
     for (auto iter = ImageGoodNameOfThis.begin(); iter != ImageGoodNameOfThis.end(); ++iter) {
-        if (iter->second == 1){
+        if (iter->second == 1 || iter->second == 2){
             std::cout<< iter->first << " " <<endl;
         }
     }
