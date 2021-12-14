@@ -1,8 +1,8 @@
 #include <iostream>
-#include "../lab_5/HashTable.h"
-#include "../lab_5/DynamicArray.h"
-#include "../lab_5/Queue.h"
-#include "../lab_5/Cache.h"
+#include "HashTable.h"
+#include "DynamicArray.h"
+#include "Queue.h"
+#include "Cache.h"
 #include <string>
 #include <chrono>
 #include <cmath>
